@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerador de Prompts da Singularidade Inversa</title>
+    <link rel="stylesheet" href="index.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/genai": "https://esm.sh/@google/genai@^0.7.0",
+          "marked": "https://esm.sh/marked@^12.0.0"
+        }
+      }
+    </script>
+    <script type="module" src="index.tsx"></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Gerador de Prompts da Singularidade Inversa</h1>
+        <p>
+          Transforme sua ideia em um prompt perfeitamente otimizado através de um
+          pipeline de três estágios: Arquitetura Causal, Destilação por
+          Restrição e Expansão Evolutiva.
+        </p>
+      </header>
+      <form id="prompt-form">
+        <label for="prompt-input"
+          >Descreva sua necessidade ou objetivo aqui:</label
+        >
+        <textarea
+          id="prompt-input"
+          name="prompt-input"
+          rows="5"
+          placeholder="Ex: Crie uma postagem de blog sobre os benefícios da energia solar para proprietários de residências, com um tom otimista e informativo."
+          required
+        ></textarea>
+        <button type="submit" id="generate-button">
+          Iniciar Gênese de Prompt
+        </button>
+      </form>
+
+      <section id="behavior-guidance-container" class="hidden transitionable">
+        <h2>Passo 1: Selecione a Arquitetura do Prompt</h2>
+        <p>Analisamos sua solicitação. Agora, escolha uma arquitetura técnica para o prompt final.</p>
+        <div class="loader-container hidden" id="initial-prompt-loader">
+           <div class="spinner"></div>
+           <p>Analisando solicitação inicial...</p>
+        </div>
+        <div id="initial-prompt-display" class="hidden">
+            <h3>Prompt Base Proposto:</h3>
+            <blockquote id="initial-prompt-output"></blockquote>
+            <h3>Selecione uma Arquitetura Técnica:</h3>
+            <div id="behavior-options">
+              <!-- Botões de arquitetura serão inseridos dinamicamente aqui -->
+            </div>
+        </div>
+      </section>
+
+      <section id="result-container" class="hidden transitionable" aria-live="polite" aria-busy="false">
+         <div id="dossier-header" class="hidden">
+            <h2>Passo 2: Dossiê de Gênese de Prompt</h2>
+            <p>Com base na arquitetura selecionada, geramos um dossiê técnico completo para o seu prompt.</p>
+        </div>
+        <div class="loader-container hidden" id="dossier-loader">
+           <div class="spinner"></div>
+           <p id="loader-text">Processando...</p>
+        </div>
+        <div id="output" class="markdown-content"></div>
+      </section>
+      
+      <section id="playground-container" class="hidden transitionable">
+        <h2>🧪 Passo 3: Câmara de Testes</h2>
+        <p>Teste e refine o prompt campeão gerado. Execute-o diretamente para ver os resultados.</p>
+        <form id="playground-form">
+          <label for="playground-prompt">Prompt para Testar:</label>
+          <textarea id="playground-prompt" name="playground-prompt" rows="8" required></textarea>
+          <button type="submit" id="playground-run-button">Testar Prompt</button>
+        </form>
+        <div id="playground-result-container" aria-live="polite" aria-busy="false">
+           <div class="loader-container hidden" id="playground-loader">
+            <div class="spinner"></div>
+            <p>Executando o prompt...</p>
+          </div>
+          <div id="playground-output" class="markdown-content"></div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

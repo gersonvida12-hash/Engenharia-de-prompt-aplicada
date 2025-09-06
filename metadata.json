@@ -1,0 +1,5 @@
+{
+  "name": "Gerador de Prompts da Singularidade Inversa",
+  "description": "Um sistema completo que transforma sua ideia em um prompt perfeitamente otimizado através de um pipeline de três estágios: Arquitetura Causal, Destilação por Restrição e Expansão Evolutiva.",
+  "requestFramePermissions": []
+}
