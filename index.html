@@ -8,7 +8,7 @@
     <script type="importmap">
       {
         "imports": {
-          "@google/genai": "https://esm.sh/@google/genai@^0.7.0",
+          "@google/genai": "https://esm.sh/@google/genai@^0.12.0",
           "marked": "https://esm.sh/marked@^12.0.0"
         }
       }
@@ -17,7 +17,11 @@
   </head>
   <body>
     <main>
-      <header>
+      <header class="hero-header">
+        <button id="audit-button" class="audit-btn" aria-label="Executar Auditoria de Código" data-tooltip="Assistente de Otimização">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm4.36 6.16-1.55-1.55a1 1 0 0 0-1.42 0l-4.57 4.58-2.58-2.58a1 1 0 0 0-1.42 1.42l3.29 3.29a1 1 0 0 0 1.42 0l5.83-5.83a1 1 0 0 0 0-1.41z"></path></svg>
+            <span class="sr-only">Auditoria de Código</span>
+        </button>
         <h1>Gerador de Prompts da Singularidade Inversa</h1>
         <p>
           Transforme sua ideia em um prompt perfeitamente otimizado através de um
@@ -25,33 +29,61 @@
           Restrição e Expansão Evolutiva.
         </p>
       </header>
-      <form id="prompt-form">
-        <label for="prompt-input"
-          >Descreva sua necessidade ou objetivo aqui:</label
-        >
-        <textarea
-          id="prompt-input"
-          name="prompt-input"
-          rows="5"
-          placeholder="Ex: Crie uma postagem de blog sobre os benefícios da energia solar para proprietários de residências, com um tom otimista e informativo."
-          required
-        ></textarea>
-        <button type="submit" id="generate-button">
-          Iniciar Gênese de Prompt
-        </button>
-      </form>
+
+      <div class="prompt-card">
+        <form id="prompt-form">
+          <div class="form-group">
+            <label for="prompt-input">1. Descreva sua necessidade ou objetivo</label>
+            <textarea
+              id="prompt-input"
+              name="prompt-input"
+              rows="5"
+              placeholder="Ex: Crie uma postagem de blog sobre os benefícios da energia solar para proprietários de residências, com um tom otimista e informativo."
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="file-input">2. Anexar arquivos (Opcional)</label>
+            <div class="attachment-controls">
+              <input type="file" id="file-input" multiple class="file-input-hidden" />
+              <label for="file-input" class="file-input-label button-like">Escolher Arquivos</label>
+              <div class="strategy-selector">
+                 <label for="attachment-usage" class="sr-only">Estratégia de Uso</label>
+                 <select id="attachment-usage">
+                    <option value="context">Usar como Contexto/Referência</option>
+                    <option value="style_source">Adotar como Fonte de Estilo</option>
+                    <option value="structural_example">Seguir como Exemplo Estrutural</option>
+                    <option value="fact_check">Usar para Validação Cruzada</option>
+                 </select>
+              </div>
+            </div>
+            <div class="loader-container hidden" id="attachment-loader">
+                <div class="spinner"></div>
+                <p>Processando arquivos...</p>
+                <button type="button" id="cancel-attachment-processing" class="button-cancel">Cancelar</button>
+            </div>
+            <div id="file-list"></div>
+          </div>
+
+          <button type="submit" id="generate-button">
+            Iniciar Gênese de Prompt
+          </button>
+        </form>
+      </div>
+
 
       <section id="behavior-guidance-container" class="hidden transitionable">
         <h2>Passo 1: Selecione a Arquitetura do Prompt</h2>
         <p>Analisamos sua solicitação. Agora, escolha uma arquitetura técnica para o prompt final.</p>
-        <div class="loader-container hidden" id="initial-prompt-loader">
+        <div class="loader-container" id="initial-prompt-loader">
            <div class="spinner"></div>
-           <p>Analisando solicitação inicial...</p>
+           <p id="initial-loader-text">Analisando solicitação inicial...</p>
         </div>
         <div id="initial-prompt-display" class="hidden">
             <h3>Prompt Base Proposto:</h3>
             <blockquote id="initial-prompt-output"></blockquote>
-            <h3>Selecione uma Arquitetura Técnica:</h3>
+            <h3>Selecione uma Arquitetura Técnica (Personalizada para seu Prompt):</h3>
             <div id="behavior-options">
               <!-- Botões de arquitetura serão inseridos dinamicamente aqui -->
             </div>
@@ -70,12 +102,32 @@
         <div id="output" class="markdown-content"></div>
       </section>
       
+      <section id="evaluation-container" class="hidden transitionable">
+        <h2>🔬 Análise do Prompt Campeão</h2>
+        <div class="loader-container hidden" id="evaluation-loader">
+           <div class="spinner"></div>
+           <p>Avaliando o prompt gerado...</p>
+        </div>
+        <div id="evaluation-content">
+           <!-- Conteúdo da avaliação será gerado dinamicamente -->
+        </div>
+      </section>
+
       <section id="playground-container" class="hidden transitionable">
-        <h2>🧪 Passo 3: Câmara de Testes</h2>
-        <p>Teste e refine o prompt campeão gerado. Execute-o diretamente para ver os resultados.</p>
+        <h2>🚀 Passo 3: Estúdio de Otimização e Testes</h2>
+        <p>Otimize, refine e teste seu prompt campeão em um loop interativo até atingir a perfeição.</p>
         <form id="playground-form">
-          <label for="playground-prompt">Prompt para Testar:</label>
-          <textarea id="playground-prompt" name="playground-prompt" rows="8" required></textarea>
+          <div class="form-group">
+            <label for="playground-prompt">Prompt Atual:</label>
+            <textarea id="playground-prompt" name="playground-prompt" rows="8" required></textarea>
+          </div>
+          <div class="optimization-group">
+            <div class="form-group">
+              <label for="refinement-input" class="sr-only">Instrução de Refinamento (Loop)</label>
+              <input type="text" id="refinement-input" placeholder="Instrução de refinamento (Ex: torne mais conciso)..." />
+            </div>
+            <button type="button" id="optimize-prompt-button">Otimizar</button>
+          </div>
           <button type="submit" id="playground-run-button">Testar Prompt</button>
         </form>
         <div id="playground-result-container" aria-live="polite" aria-busy="false">
@@ -87,5 +139,18 @@
         </div>
       </section>
     </main>
+
+    <div id="audit-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Relatório de Auditoria de Código</h2>
+                <button id="audit-modal-close" class="modal-close-btn">&times;</button>
+            </div>
+            <div id="audit-report-content" class="markdown-content">
+                <!-- Conteúdo do relatório será inserido aqui -->
+            </div>
+        </div>
+    </div>
+
   </body>
 </html>
