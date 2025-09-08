@@ -1,5 +1,5 @@
 {
-  "name": "Gerador de Prompts da Singularidade Inversa",
-  "description": "Um sistema completo que transforma sua ideia em um prompt perfeitamente otimizado através de um pipeline de três estágios: Arquitetura Causal, Destilação por Restrição e Expansão Evolutiva.",
+  "name": "Interface Multimodal Gemini",
+  "description": "Uma interface de usuário para interagir com a API Gemini, permitindo o envio de instruções de texto e arquivos (imagens, áudio, etc.) para gerar respostas multimodais.",
   "requestFramePermissions": []
 }
