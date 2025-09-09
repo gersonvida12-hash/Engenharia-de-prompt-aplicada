@@ -30,9 +30,15 @@ const App: React.FC = () => {
     const [availableModels, setAvailableModels] = useState<string[]>([]);
     const [selectedModel, setSelectedModel] = useState('llama2');
     const [llamaUrl, setLlamaUrl] = useState('http://localhost:11434');
+    const [isElectron, setIsElectron] = useState(false);
     
     const fileInputRef = useRef<HTMLInputElement>(null);
     const workerRef = useRef<Worker | null>(null);
+
+    // Check if running in Electron
+    useEffect(() => {
+        setIsElectron(!!window.electronAPI);
+    }, []);
 
     // Check LLaMA connection on mount
     useEffect(() => {
@@ -118,6 +124,29 @@ const App: React.FC = () => {
         }
     };
 
+    const handleStartOllama = async () => {
+        if (isElectron && window.electronAPI) {
+            try {
+                const started = await window.electronAPI.startOllama();
+                if (started) {
+                    await window.electronAPI.showInfoDialog(
+                        'Ollama Iniciado', 
+                        'Tentativa de iniciar o Ollama. Aguarde alguns segundos e teste a conexão novamente.'
+                    );
+                    // Wait a bit and recheck connection
+                    setTimeout(checkConnection, 3000);
+                } else {
+                    await window.electronAPI.showErrorDialog(
+                        'Erro ao Iniciar Ollama', 
+                        'Não foi possível iniciar o Ollama automaticamente. Por favor, inicie manualmente executando "ollama serve" no terminal.'
+                    );
+                }
+            } catch (error) {
+                console.error('Error starting Ollama:', error);
+            }
+        }
+    };
+
     const resetStateForNewFiles = (files: File[]) => {
         setUploadedFiles(files);
         setProcessedFiles([]);
@@ -178,7 +207,7 @@ const App: React.FC = () => {
             const messages: LlamaMessage[] = [
                 {
                     role: 'system',
-                    content: 'Você é um assistente AI útil. Responda de forma clara e precisa.'
+                    content: 'Você é um assistente AI útil que responde em português. Responda de forma clara e precisa.'
                 },
                 {
                     role: 'user',
@@ -237,6 +266,7 @@ const App: React.FC = () => {
         <div className="app-container fade-in">
             <header>
                 <h1>Interface Multimodal com LLaMA Local</h1>
+                {isElectron && <p style={{margin: 0, fontSize: '0.9rem', opacity: 0.7}}>Versão Desktop para Windows 11 Pro</p>}
             </header>
 
             {/* Connection Status Bar */}
@@ -246,6 +276,20 @@ const App: React.FC = () => {
                     <span>
                         {isConnected ? 'Conectado ao LLaMA' : 'Desconectado'}
                     </span>
+                    {!isConnected && isElectron && (
+                        <button 
+                            type="button"
+                            onClick={handleStartOllama}
+                            style={{ 
+                                marginLeft: '0.5rem', 
+                                padding: '0.25rem 0.5rem', 
+                                fontSize: '0.8rem',
+                                minWidth: 'auto'
+                            }}
+                        >
+                            Iniciar Ollama
+                        </button>
+                    )}
                 </div>
                 
                 <div className="model-selector">
@@ -272,7 +316,7 @@ const App: React.FC = () => {
 
             {/* URL Configuration */}
             <div className="status-bar">
-                <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <label htmlFor="llama-url">URL do LLaMA:</label>
                     <input 
                         id="llama-url"
@@ -280,7 +324,7 @@ const App: React.FC = () => {
                         value={llamaUrl}
                         onChange={(e) => setLlamaUrl(e.target.value)}
                         onBlur={checkConnection}
-                        style={{ marginLeft: '0.5rem', padding: '0.5rem' }}
+                        style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
                     />
                 </div>
                 <button 
@@ -311,6 +355,9 @@ const App: React.FC = () => {
                             accept={SUPPORTED_MIME_TYPES_STRING}
                         />
                         <p>Arraste e solte arquivos aqui, ou clique para selecionar arquivos.</p>
+                        <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>
+                            Suportado: Imagens, Documentos (PDF, DOCX, etc.), Áudio, Vídeo, Texto
+                        </p>
                         <button 
                             type="button" 
                             onClick={(e) => { 
@@ -336,8 +383,8 @@ const App: React.FC = () => {
                     <textarea
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
-                        placeholder="Digite seu prompt aqui... (ou faça upload de arquivos para análise)"
-                        rows={4}
+                        placeholder="Digite seu prompt aqui... (ou faça upload de arquivos para análise)&#10;&#10;Exemplos:&#10;- Analise esta imagem e descreva o que você vê&#10;- Resuma este documento&#10;- Explique o código neste arquivo&#10;- Transcreva e resuma este áudio"
+                        rows={6}
                         disabled={isLoading}
                     />
                     
@@ -370,12 +417,23 @@ const App: React.FC = () => {
                 {error && (
                     <div className="error-message fade-in">
                         {error}
+                        {!isConnected && (
+                            <div style={{ marginTop: '1rem' }}>
+                                <strong>Passos para resolver:</strong>
+                                <ol>
+                                    <li>Abra o terminal/prompt de comando</li>
+                                    <li>Execute: <code>ollama serve</code></li>
+                                    <li>Aguarde a mensagem "Ollama is running"</li>
+                                    <li>Clique em "Testar Conexão"</li>
+                                </ol>
+                            </div>
+                        )}
                     </div>
                 )}
 
                 {isLoading && (
                     <div className="loading-indicator pulse">
-                        Processando com LLaMA local...
+                        Processando com LLaMA local... Aguarde alguns instantes.
                     </div>
                 )}
 
