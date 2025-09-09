@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "lib": ["ES2022"],
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "../dist-electron",
+    "rootDir": ".",
+    "declaration": false,
+    "sourceMap": false,
+    "types": ["node"],
+    "allowImportingTsExtensions": false
+  },
+  "include": [
+    "main.ts",
+    "preload.ts"
+  ],
+  "exclude": [
+    "../node_modules",
+    "../dist",
+    "../dist-electron"
+  ]
+}
